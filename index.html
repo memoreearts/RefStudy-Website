@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RefStudy – artists reference analyzer</title>
+<meta name="description" content="RefStudy helps painters and draughtspeople measure a reference photo, see its values, mix its colours and check their drawing against it. Android, Windows and macOS.">
+<meta name="theme-color" content="#0c0b0a">
+<!-- SOCIAL PREVIEW: replace refstudy.app with your real domain once you have it -->
+<meta property="og:title" content="RefStudy – artists reference analyzer">
+<meta property="og:description" content="Measure your reference, see its values, mix its colours and check your drawing against it.">
+<meta property="og:image" content="https://refstudy.app/assets/og-image.jpg">
+<meta property="og:url" content="https://refstudy.app/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 288 288'%3E%3Crect width='288' height='288' fill='%230c0b0a'/%3E%3Crect x='52' y='52' width='184' height='184' fill='%23b5a78c'/%3E%3Cpath d='M113.33 52V236M174.67 52V236M52 113.33H236M52 174.67H236' stroke='%230c0b0a' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens (from the RefStudy style brief) ===== */
+:root {
+  --ground: #0c0b0a;
+  --title: #f2efe9;
+  --muted: #8f8a80;
+  --accent: #b5a78c;
+  --line: rgba(242,239,233,0.32);
+  --line-hover: rgba(242,239,233,0.85);
+  --thumb: #151412;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ease: cubic-bezier(0.2,0.7,0.2,1);
+  --cell: 80px; --minor: 16px; --ruler: 32px;
+  --n: 14; --gx: 64px;            /* set by script: column count and grid x-offset */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--ground); -webkit-text-size-adjust: 100%; overflow-x: clip; scroll-padding-top: env(safe-area-inset-top, 0px); }
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body {
+  margin: 0; min-height: 100vh; position: relative; overflow-x: clip;
+  background: var(--ground); color: var(--muted);
+  font: 400 15px/1.35 var(--sans);
+  font-feature-settings: 'ss01' 1, 'cv01' 1;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, p, ul { margin: 0; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 1px solid var(--line-hover); outline-offset: 4px; }
+
+/* ===== Drafting grid: 80px major / 16px minor, + at major intersections ===== */
+.grid-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' shape-rendering='crispEdges'%3E%3Cg stroke='rgba(242,239,233,0.05)'%3E%3Cpath d='M16.5 0V80M32.5 0V80M48.5 0V80M64.5 0V80M0 16.5H80M0 32.5H80M0 48.5H80M0 64.5H80'/%3E%3C/g%3E%3Cpath d='M0.5 0V80M0 0.5H80' stroke='rgba(242,239,233,0.13)'/%3E%3Cpath d='M0.5 0V4M0.5 77V80M0 0.5H4M77 0.5H80' stroke='rgba(242,239,233,0.38)'/%3E%3C/svg%3E");
+  background-position: var(--gx) 0;
+}
+/* Warm lift behind the hero, vignette and film grain */
+.glow {
+  position: absolute; z-index: 0; pointer-events: none;
+  width: calc(var(--cell) * 12); height: calc(var(--cell) * 8);
+  left: calc(var(--gx) - var(--cell) * 1); top: 0;
+  background: radial-gradient(closest-side, rgba(181,167,140,.09), rgba(181,167,140,.03) 55%, transparent);
+}
+.vignette, .grain { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+.vignette { background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+.grain {
+  opacity: .075; background-size: 180px 180px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Registration marks in the screen corners */
+.crop { position: fixed; width: 12px; height: 12px; z-index: 51; pointer-events: none; border: 0 solid rgba(242,239,233,.40); }
+.crop.tl { top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(var(--ruler) + 12px); border-width: 1px 0 0 1px; }
+.crop.tr { top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; border-width: 1px 1px 0 0; }
+.crop.bl { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: calc(var(--ruler) + 12px); border-width: 0 0 1px 1px; }
+.crop.br { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); right: 12px; border-width: 0 1px 1px 0; }
+
+/* ===== Rulers (drawn by script) ===== */
+.ruler-left { position: absolute; left: 0; top: 0; width: var(--ruler); z-index: 5; background: var(--ground); pointer-events: none; }
+.ruler-left svg, .ruler-bottom svg { display: block; }
+
+/* ===== Layout: a column of whole grid cells ===== */
+.page { position: relative; z-index: 2; }
+.cols {
+  display: grid; grid-template-columns: repeat(var(--n), var(--cell));
+  margin-left: var(--gx); width: calc(var(--n) * var(--cell));
+  column-gap: 0;
+}
+.full { grid-column: 1 / -1; }
+
+/* ===== Cutouts: ground-filled, hairline, square, + on each corner ===== */
+.cutout { position: relative; background: var(--ground); border: 1px solid var(--line); transition: border-color .22s ease; }
+.cutout > .plus {
+  position: absolute; width: 13px; height: 13px; pointer-events: none;
+  background:
+    linear-gradient(var(--line), var(--line)) center / 1px 100% no-repeat,
+    linear-gradient(var(--line), var(--line)) center / 100% 1px no-repeat;
+  transition: transform .22s ease, background .22s ease;
+}
+.plus.p1 { top: -7px; left: -7px; } .plus.p2 { top: -7px; right: -7px; }
+.plus.p3 { bottom: -7px; left: -7px; } .plus.p4 { bottom: -7px; right: -7px; }
+a.cutout, button.cutout { cursor: pointer; text-decoration: none; }
+a.cutout:hover, a.cutout:focus-visible, button.cutout:hover, button.cutout:focus-visible { border-color: var(--line-hover); outline: none; }
+a.cutout:hover > .plus, a.cutout:focus-visible > .plus, button.cutout:hover > .plus, button.cutout:focus-visible > .plus {
+  transform: scale(1.9);
+  background:
+    linear-gradient(var(--line-hover), var(--line-hover)) center / 1px 100% no-repeat,
+    linear-gradient(var(--line-hover), var(--line-hover)) center / 100% 1px no-repeat;
+}
+
+/* ===== Type ===== */
+.label {               /* section label */
+  font: 400 12px/32px var(--mono); text-transform: uppercase; letter-spacing: .22em; color: var(--muted);
+  height: 32px;
+}
+.action {              /* numbered action, e.g. 01 / Join the waitlist */
+  display: flex; align-items: center; justify-content: center; gap: .9em;
+  font: 400 14px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title);
+  background: var(--ground); border-radius: 0; padding: 0 16px; width: 100%;
+}
+.action .num { color: var(--accent); }
+.action.second .num { color: var(--muted); }
+.action[aria-disabled="true"] { color: var(--muted); cursor: default; }
+.textbtn {
+  font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--title);
+  text-decoration: underline transparent; text-underline-offset: 5px; transition: filter .2s, text-decoration-color .2s;
+  background: none; border: 0; padding: 0; cursor: pointer;
+}
+.textbtn:hover, .textbtn:focus-visible { filter: brightness(1.35); text-decoration-color: currentColor; }
+.serif { font-family: var(--serif); font-weight: 400; color: var(--title); letter-spacing: -0.01em; line-height: 1; }
+
+/* ===== Header ===== */
+.header { height: 80px; align-items: center; }
+.brand { grid-column: 1 / span 4; display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.brand svg { width: 32px; height: 32px; }
+.brand span { font: 400 30px/1 var(--serif); color: var(--title); letter-spacing: -0.01em; }
+.header .textbtn { grid-column: -4 / -1; justify-self: end; }
+
+/* ===== Hero ===== */
+.hero { position: relative; padding-top: 80px; row-gap: 32px; }
+.rays { position: absolute; left: var(--gx); bottom: 0; width: 1200px; height: 1200px; pointer-events: none; z-index: -1; overflow: visible; }
+.hero-copy { grid-column: 1 / -6; padding: 48px 48px 47px; }
+.hero-copy .wordmark { font-size: clamp(56px, 8vw, 84px); }
+.hero-copy .byline { font: italic 400 20px/1 var(--serif); color: var(--accent); margin-top: 8px; }
+.hero-copy h1 { font: 400 clamp(32px, 4vw, 44px)/1.05 var(--serif); color: var(--title); letter-spacing: -0.01em; margin-top: 48px; max-width: 20ch; }
+.hero-copy .tagline { margin-top: 16px; max-width: 44ch; font-size: 16px; line-height: 1.45; }
+.readout { margin-top: 32px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.readout b { color: var(--accent); font-weight: 400; }
+
+.shot { grid-column: -5 / -1; grid-row: 1 / span 3; align-self: start; height: calc(var(--cell) * 8); overflow: visible; }
+.shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+.signup { grid-column: 1 / -6; display: grid; grid-template-columns: 1fr auto; gap: 0; }
+.signup .field { height: 64px; display: flex; }
+.signup input {
+  flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; color: var(--title);
+  font: 400 15px var(--sans); padding: 0 20px; outline: none;
+}
+.signup input::placeholder { color: var(--muted); }
+.signup .field:focus-within { border-color: var(--line-hover); }
+.signup button.cutout { height: 64px; border-left: 0; width: auto; padding: 0 28px; }
+.consent { grid-column: 1 / -6; font: 400 11px/16px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); min-height: 32px; }
+.consent .ok { color: var(--accent); }
+
+/* ===== Features ===== */
+.section { padding-top: 128px; }
+.section .label { grid-column: 1 / -1; margin-bottom: 16px; }
+.section h2 { grid-column: 1 / -1; font: 400 clamp(36px, 5vw, 56px)/1 var(--serif); color: var(--title); letter-spacing: -0.01em; max-width: 18ch; margin-bottom: 48px; }
+.features { row-gap: 32px; }
+.feature { padding: 31px 32px 32px; display: flex; flex-direction: column; }
+.feature.fa { grid-column: 1 / span 6; }
+.feature.fb { grid-column: 8 / span 6; }
+.feature .fl { font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); }
+.feature .fl .num { color: var(--accent); margin-right: .7em; }
+.feature h3 { font: 400 32px/1.05 var(--serif); color: var(--title); letter-spacing: -0.01em; margin-top: 24px; }
+.feature p { margin-top: 12px; max-width: 46ch; }
+.feature .art { margin-top: 32px; height: 96px; display: flex; align-items: flex-end; }
+.feature .tag { margin-top: 20px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+
+/* value steps strip */
+.steps { display: grid; grid-template-columns: repeat(5, 48px); height: 64px; border: 1px solid var(--line); }
+.steps i:nth-child(1){background:#0c0b0a} .steps i:nth-child(2){background:#3a3834} .steps i:nth-child(3){background:#6b6760}
+.steps i:nth-child(4){background:#a6a198} .steps i:nth-child(5){background:#e6e2db}
+/* progress track */
+.track { width: 100%; max-width: 320px; }
+.track .bar { position: relative; height: 12px; border: 1px solid rgba(242,239,233,.4); }
+.track .fill { position: absolute; inset: 0 auto 0 0; width: 86%; background: var(--accent); }
+.track .ticks { height: 6px; margin-top: 4px; background: repeating-linear-gradient(to right, rgba(242,239,233,.3) 0 1px, transparent 1px 10%); }
+.track .ro { margin-top: 10px; font: 400 10px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); display: flex; justify-content: space-between; }
+/* compare */
+.compare { display: flex; align-items: flex-end; gap: 16px; }
+.compare .sw { width: 64px; height: 64px; border: 1px solid var(--line); }
+.compare .ro { font: 400 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+
+.also { grid-column: 1 / -1; margin-top: 48px; font: 400 12px/2 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.also span { color: var(--title); }
+
+/* ===== Levels ===== */
+.levels p.big { grid-column: 1 / -1; font: 400 clamp(22px, 2.6vw, 28px)/1.3 var(--serif); color: var(--muted); max-width: 34ch; }
+.mediums { grid-column: 1 / -1; margin-top: 32px; list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0; }
+.mediums li { font: 400 12px/48px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); padding: 0 20px; border: 1px solid var(--line); margin: 0 -1px -1px 0; background: var(--ground); }
+
+/* ===== Get it ===== */
+.get .actions { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, calc(var(--cell) * 5)); gap: 32px; }
+.get .actions .cutout { height: 80px; }
+.get .note { grid-column: 1 / -1; margin-top: 32px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; }
+.get .note b { color: var(--accent); font-weight: 400; }
+
+/* ===== Footer ruler ===== */
+.footer { position: relative; margin-top: 160px; height: 32px; z-index: 6; }
+.ruler-bottom { position: absolute; left: 0; right: 0; top: 0; height: 32px; background: var(--ground); border-top: 1px solid rgba(242,239,233,.20); }
+.footer .meta { position: absolute; right: 24px; top: 0; height: 32px; display: flex; align-items: center; gap: 24px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.footer .meta a { text-decoration: none; }
+.footer .meta a:hover { color: var(--title); }
+.footer-pad { height: 24px; }
+
+/* ===== Narrow screens ===== */
+html[data-narrow] .hero-copy, html[data-narrow] .signup, html[data-narrow] .consent { grid-column: 1 / -1; }
+html[data-narrow] .hero-copy { padding: 32px 24px 31px; }
+html[data-narrow] .shot { grid-column: 1 / -1; grid-row: auto; height: calc(var(--cell) * 8); }
+html[data-narrow] .feature.fa, html[data-narrow] .feature.fb { grid-column: 1 / -1; }
+html[data-narrow] .brand { grid-column: 1 / span 2; }
+html[data-narrow] .get .actions { grid-template-columns: 1fr; }
+html[data-narrow] .header .textbtn { grid-column: -3 / -1; }
+html[data-narrow] .signup { grid-template-columns: 1fr; }
+html[data-narrow] .signup button.cutout { border-left: 1px solid var(--line); border-top: 0; }
+html[data-narrow] .footer .meta .soc { display: none; }
+html[data-narrow] .header .long { display: none; }
+
+/* ===== Load-in ===== */
+@media (prefers-reduced-motion: no-preference) {
+  .grid-bg { animation: fade .3s var(--ease) both; }
+  .ruler-left, .ruler-bottom { animation: fade .3s var(--ease) .15s both; }
+  .rise { animation: rise .3s var(--ease) both; animation-delay: calc(.3s + var(--i, 0) * .06s); }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(5px); } }
+}
+
+/* ===== v2 layout ===== */
+.hero-copy { grid-column: 1 / -6; }
+.hero-copy .sub { margin-top: 10px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .22em; color: var(--muted); }
+.hero-copy h1 { margin-top: 40px; }
+.acts { grid-column: 1 / -6; display: grid; grid-template-columns: repeat(3, 1fr); }
+.acts .cutout { height: 64px; margin-left: -1px; }
+.acts .cutout:first-child { margin-left: 0; }
+.acts .action { font-size: 12px; letter-spacing: .14em; gap: .7em; }
+.hero-note { grid-column: 1 / -6; font: 400 11px/32px var(--mono); text-transform: uppercase; letter-spacing: .14em; height: 32px; }
+.hero-note b { color: var(--accent); font-weight: 400; }
+.hero-note a { color: var(--title); }
+.hero-media { grid-column: -5 / -1; grid-row: 1 / span 3; align-self: start; height: calc(var(--cell) * 8); margin: 0; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: .55; }
+
+/* media placeholders */
+.slot { margin: 0; height: calc(var(--cell) * 7); overflow: visible;
+  background:
+    repeating-linear-gradient(135deg, rgba(242,239,233,.035) 0 1px, transparent 1px 12px),
+    var(--ground); }
+.slot-in { position: absolute; inset: 0; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.hero-media .slot-in { top: auto; background: linear-gradient(transparent, rgba(12,11,10,.92) 30%); padding-top: 64px; }
+.slot-id { font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--accent); }
+.slot-what { color: var(--title); font-size: 15px; line-height: 1.45; max-width: 40ch; }
+.slot-spec { margin-top: auto; font: 400 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.slot-cap { position: absolute; left: 0; top: 100%; margin-top: 12px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); }
+
+/* feature rows */
+.frows { row-gap: 48px; }
+.ftext { grid-column: 1 / span 6; align-self: stretch; padding: 31px 32px 32px; display: flex; flex-direction: column; }
+.ftext .fl { font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); }
+.ftext .fl .num { color: var(--accent); margin-right: .7em; }
+.ftext h3 { font: 400 clamp(30px, 3.2vw, 40px)/1.05 var(--serif); color: var(--title); letter-spacing: -0.01em; margin-top: 24px; }
+.ftext p.d { margin-top: 12px; max-width: 40ch; font-size: 16px; line-height: 1.45; }
+.ftext .tag { margin-top: auto; padding-top: 24px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.ftext .tag b { color: var(--accent); font-weight: 400; }
+.frows .slot { grid-column: 8 / span 6; height: calc(var(--cell) * 6); }
+.frows .also { grid-column: 1 / -1; margin-top: 0; }
+
+/* proof */
+.proof { row-gap: 0; }
+.proof .slot { height: calc(var(--cell) * 7); margin-bottom: 48px; }
+.proof .slot.a { grid-column: 1 / span 6; }
+.proof .slot.b { grid-column: 8 / span 6; }
+
+/* who */
+.who .mediums { margin-top: 0; }
+
+/* get */
+.get .acts { grid-column: 1 / span 10; }
+.get p.small { grid-column: 1 / -1; margin-top: 24px; max-width: 60ch; font-size: 15px; }
+
+/* faq */
+.faq-list { grid-column: 1 / span 10; display: grid; }
+.faq-list details { margin-top: -1px; }
+.faq-list summary { list-style: none; cursor: pointer; padding: 22px 56px 22px 24px; position: relative;
+  font: 400 24px/1.15 var(--serif); color: var(--title); }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after { content: "+"; position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+  font: 400 18px var(--mono); color: var(--accent); }
+.faq-list details[open] summary::after { content: "–"; }
+.faq-list details p { padding: 0 24px 24px; max-width: 60ch; font-size: 15px; line-height: 1.5; }
+
+/* waitlist */
+.wait .signup, .wait .consent { grid-column: 1 / span 8; }
+
+/* real media inside a frame: replaces the placeholder text */
+.slot video, .slot img.media, .hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* colourful grid behind the colour section */
+.colour-grid { position: absolute; left: 0; right: 0; z-index: 1; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent); }
+.colour-grid i { position: absolute; inset: 0; opacity: .6;
+  background: conic-gradient(from 200deg at var(--cx, 50%) 50%, #e5484d, #f5a623, #f2d43d, #3dbf74, #2bb3c0, #3d5afe, #9b5de5, #ef476f, #e5484d);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' shape-rendering='crispEdges'%3E%3Cg stroke='rgba(0,0,0,0.28)'%3E%3Cpath d='M16.5 0V80M32.5 0V80M48.5 0V80M64.5 0V80M0 16.5H80M0 32.5H80M0 48.5H80M0 64.5H80'/%3E%3C/g%3E%3Cpath d='M0.5 0V80M0 0.5H80' stroke='rgba(0,0,0,0.75)'/%3E%3Cpath d='M0.5 0V4M0.5 77V80M0 0.5H4M77 0.5H80' stroke='%23000'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' shape-rendering='crispEdges'%3E%3Cg stroke='rgba(0,0,0,0.28)'%3E%3Cpath d='M16.5 0V80M32.5 0V80M48.5 0V80M64.5 0V80M0 16.5H80M0 32.5H80M0 48.5H80M0 64.5H80'/%3E%3C/g%3E%3Cpath d='M0.5 0V80M0 0.5H80' stroke='rgba(0,0,0,0.75)'/%3E%3Cpath d='M0.5 0V4M0.5 77V80M0 0.5H4M77 0.5H80' stroke='%23000'/%3E%3C/svg%3E");
+  -webkit-mask-position: var(--gx) 0; mask-position: var(--gx) 0; }
+
+/* narrow screens */
+html[data-narrow] .hero-copy, html[data-narrow] .acts, html[data-narrow] .hero-note,
+html[data-narrow] .ftext, html[data-narrow] .frows .slot, html[data-narrow] .proof .slot.a, html[data-narrow] .proof .slot.b,
+html[data-narrow] .get .acts, html[data-narrow] .faq-list, html[data-narrow] .wait .signup, html[data-narrow] .wait .consent { grid-column: 1 / -1; }
+html[data-narrow] .hero-media { grid-column: 1 / -1; grid-row: auto; }
+html[data-narrow] .acts { grid-template-columns: 1fr; }
+html[data-narrow] .acts .cutout { margin-left: 0; margin-top: -1px; }
+html[data-narrow] .hero-note { height: auto; line-height: 1.6; padding: 6px 0; }
+html[data-narrow] .frows { row-gap: 0; }
+html[data-narrow] .ftext { margin-top: 48px; }
+html[data-narrow] .frows .slot, html[data-narrow] .proof .slot { height: calc(var(--cell) * 5); }
+html[data-narrow] .frows .slot { margin-top: -1px; }
+html[data-narrow] .proof .slot.a { margin-bottom: 64px; }
+html[data-narrow] .faq-list summary { font-size: 20px; }
+</style>
+</head>
+<body>
+
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="colour-grid" aria-hidden="true"><i></i></div>
+<div class="glow" aria-hidden="true"></div>
+<div class="ruler-left" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<i class="crop tl" aria-hidden="true"></i><i class="crop tr" aria-hidden="true"></i>
+<i class="crop bl" aria-hidden="true"></i><i class="crop br" aria-hidden="true"></i>
+
+<div class="page">
+
+  <header class="cols header snap">
+    <a class="brand" href="#" aria-label="RefStudy home">
+      <svg viewBox="0 0 288 288" aria-hidden="true">
+        <path d="M0 52V0H52M236 0H288V52M288 236V288H236M52 288H0V236" stroke="rgba(242,239,233,0.75)" stroke-width="12" fill="none" stroke-linecap="square"/>
+        <rect x="52" y="52" width="184" height="184" fill="#b5a78c"/>
+        <path d="M113.33 52V236M174.67 52V236M52 113.33H236M52 174.67H236" stroke="#0c0b0a" stroke-width="8"/>
+      </svg>
+      <span>RefStudy</span>
+    </a>
+    <a class="textbtn" href="#waitlist"><span class="long">Get launch </span>email</a>
+  </header>
+
+  <main>
+    <!-- 1. FIRST SCREEN: one promise, one moving image, the buttons -->
+    <section class="cols hero">
+      <svg class="rays" viewBox="0 0 1200 1200" aria-hidden="true"></svg>
+
+      <div class="cutout hero-copy snap rise" style="--i:0">
+        <p class="serif wordmark">RefStudy</p>
+        <p class="byline">by MemoreeArt</p>
+        <p class="sub">Artists reference analyzer</p>
+        <h1>Study your reference the way a trained eye does.</h1>
+        <p class="tagline">Measure it, see its values, mix its colours and check your drawing against it.</p>
+        <p class="readout">Everything free until <b>11 Feb 2027</b></p>
+      </div>
+
+      <!-- On launch day: add the real links and remove aria-disabled -->
+      <div class="acts snap rise" style="--i:1">
+        <a class="cutout action" href="#" aria-disabled="true"><span class="num">01</span><span>/ Use on web</span></a>
+        <a class="cutout action second" href="#" aria-disabled="true"><span class="num">02</span><span>/ Google Play</span></a>
+        <a class="cutout action second" href="#" aria-disabled="true"><span class="num">03</span><span>/ Windows &amp; Mac</span></a>
+      </div>
+      <p class="hero-note snap">Available <b>30 Oct 2026</b> · <a class="textbtn" href="#waitlist" style="font-size:11px">get an email on launch day</a></p>
+
+      <figure class="cutout hero-media rise" style="--i:2">
+        <img src="assets/app-home.jpg" alt="">
+        <div class="slot-in"><p class="slot-id">Clip 01 · Hero loop</p>
+          <p class="slot-what">The "aha" in one shot: a reference photo on the phone, one tap, and dividers and value steps appear over it. Show the result within 2 seconds.</p>
+          <p class="slot-spec">Silent loop, 5–8 s · 1:2 vertical (720 × 1440) · screen recording · MP4 under 2 MB</p></div>
+      </figure>
+    </section>
+
+    <!-- 2. FOUR SHOW-DON'T-TELL BLOCKS -->
+    <section class="cols section frows" aria-labelledby="what">
+      <p class="label snap full">What it does</p>
+      <h2 id="what" class="snap full" style="margin-bottom:0">Everything you check by eye, laid over the photo.</h2>
+      
+      <div class="cutout ftext rise"><p class="fl"><span class="num">01</span>/ Measure</p><h3>Measure anything</h3><p class="d">Dividers, grids and perspective guides over your photo, so you can see where everything should land.</p><p class="tag"><b>All platforms</b> · drawing &amp; painting</p></div>
+      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 02 · Measure</p><p class="slot-what">Phone beside a figure drawing. One tap: a vertical divider drops onto the reference and splits the figure into heads. Then a grid appears over it.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <div class="cutout ftext rise"><p class="fl"><span class="num">02</span>/ Values</p><h3>See the values</h3><p class="d">Turn any photo into 2 to 9 flat values or big simple shapes, so you know what to block in first.</p><p class="tag"><b>All platforms</b> · drawing &amp; painting</p></div>
+      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 03 · Values</p><p class="slot-what">A portrait photo. Tap Value steps: it snaps to 5 values, then the slider drags down to 2 (black and white). End on the 2-value version.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <div class="cutout ftext rise"><p class="fl"><span class="num">03</span>/ Check my drawing</p><h3>Score your drawing</h3><p class="d">Photograph your drawing, tap a few landmarks, and see how close you got and exactly what's off.</p><p class="tag"><b>Android</b> · uses the phone camera</p></div>
+      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 04 · Check my drawing</p><p class="slot-what">Phone photographs a pencil drawing on the desk. Cut to the result: the score counts up into the ring, markers appear, then the morph slider pulls the drawing into correct proportions.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <div class="cutout ftext colour rise"><p class="fl"><span class="num">04</span>/ Colour</p><h3>Mix what you see</h3><p class="d">Point at any colour and get a mixing recipe made from the paints you actually own.</p><p class="tag"><b>Android &amp; desktop</b> · painting mode</p></div>
+      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 05 · Colour</p><p class="slot-what">Painting in progress, palette in frame. Tap a shadow colour with the Color lens; the recipe card opens. Cut to the brush mixing it on the palette.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <p class="also snap">Also: <span>Block Out</span> · <span>Squint</span> · <span>Perspective grids</span> · <span>Golden spiral</span> · <span>Isolate</span> · <span>Camera check</span> · <span>Session timer</span></p>
+    </section>
+
+    <!-- 3. ONE PROOF IMAGE -->
+    <section class="cols section proof" aria-labelledby="proof">
+      <p class="label snap full">Does it help?</p>
+      <h2 id="proof" class="snap full">Same reference. Same hour.</h2>
+      <figure class="cutout slot a rise"><div class="slot-in"><p class="slot-id">Image 06 · Before</p><p class="slot-what">Your drawing of a portrait done the usual way, no tools. Photographed flat, even light, same framing as the after.</p><p class="slot-spec">Still image · 6:7 (1200 × 1400) · JPG</p></div><p class="slot-cap">Without RefStudy</p></figure>
+      <figure class="cutout slot b rise"><div class="slot-in"><p class="slot-id">Image 07 · After</p><p class="slot-what">The same reference drawn again using dividers and value steps. Same paper, same time limit, same lighting as the before.</p><p class="slot-spec">Still image · 6:7 (1200 × 1400) · JPG</p></div><p class="slot-cap">With RefStudy</p></figure>
+    </section>
+
+    <!-- 4. WHO IT'S FOR, IN ONE LINE -->
+    <section class="cols section who" aria-labelledby="who">
+      <p class="label snap full">Who it's for</p>
+      <h2 id="who" class="snap full">Pencil to oil. First sketch to hundredth painting.</h2>
+      <ul class="mediums snap" aria-label="Works with any medium">
+        <li>Pencil</li><li>Charcoal</li><li>Ink</li><li>Oil</li><li>Acrylic</li><li>Gouache</li><li>Watercolour</li><li>Digital</li>
+      </ul>
+    </section>
+
+    <!-- 5. PRICE AND PLATFORMS -->
+    <section class="cols section get" aria-labelledby="get">
+      <p class="label snap full">Get RefStudy</p>
+      <h2 id="get" class="snap full">Free until 11 February 2027.</h2>
+      <div class="acts snap">
+        <a class="cutout action" href="#" aria-disabled="true"><span class="num">01</span><span>/ Use on web</span></a>
+        <a class="cutout action second" href="#" aria-disabled="true"><span class="num">02</span><span>/ Google Play</span></a>
+        <a class="cutout action second" href="#" aria-disabled="true"><span class="num">03</span><span>/ Windows &amp; Mac</span></a>
+      </div>
+      <p class="small snap">Every tool works on Android, Windows and Mac. Check my drawing and Camera check use the phone camera, so they're on Android.</p>
+    </section>
+
+    <!-- 6. FAQ -->
+    <section class="cols section faq" aria-labelledby="faq">
+      <p class="label snap full">Questions</p>
+      <h2 id="faq" class="snap full">Before you download.</h2>
+      <div class="faq-list snap">
+        <details class="cutout"><summary>Is it on iPhone or iPad?</summary><p>Not yet. RefStudy is on Android, Windows and Mac. Get the launch email and you'll hear first when that changes.</p></details>
+        <details class="cutout"><summary>Are my photos uploaded anywhere?</summary><p>No. Everything is processed on your own device, and projects are saved as files on your device.</p></details>
+        <details class="cutout"><summary>Does it work offline?</summary><p>Yes. The Android and desktop apps work without an internet connection.</p></details>
+        <details class="cutout"><summary>Is it for drawing or painting?</summary><p>Both. When you open a photo you choose "I'm drawing" (black and white, with value tools) or "I'm painting" (colour tools), and the app shows the tools for that.</p></details>
+        <details class="cutout"><summary>What happens after 11 February?</summary><p>Most tools stay free. A few advanced ones will become part of a paid full version, and the price will be announced well before then.</p></details>
+      </div>
+    </section>
+
+    <!-- 7. LAUNCH EMAIL -->
+    <section class="cols section wait" aria-labelledby="waitlist-h">
+      <p class="label snap full">Launch day</p>
+      <h2 id="waitlist-h" class="snap full">Get an email when it's out.</h2>
+      <!-- WAITLIST: replace action="#" with your Kit form URL -->
+      <form class="signup snap" id="waitlist" action="https://app.kit.com/forms/10040463/subscriptions" method="post">
+        <div class="cutout field">
+          <label for="email" style="position:absolute;left:-9999px">Email address</label>
+          <input id="email" name="email_address" type="email" placeholder="Your email address" autocomplete="email" required>
+        </div>
+        <button class="cutout action" type="submit"><span class="num">01</span><span>/ Notify me</span></button>
+      </form>
+      <p class="consent snap" role="status" aria-live="polite">One email on launch day. Unsubscribe anytime.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="ruler-bottom" aria-hidden="true"></div>
+    <div class="meta">
+      <a class="soc" href="#">YouTube</a><a class="soc" href="#">Instagram</a><a class="soc" href="#">TikTok</a>
+      <a href="privacy.html">Privacy</a><span>MemoreeArt · RefStudy · V1.0</span>
+    </div>
+  </footer>
+  <div class="footer-pad"></div>
+</div>
+<script>
+(function () {
+  var CELL = 80, MINOR = 16, RULER = 32;
+  var root = document.documentElement;
+  var A = function (a) { return 'rgba(242,239,233,' + a + ')'; };
+  var NS = 'http://www.w3.org/2000/svg';
+
+  // + marks on every cutout corner
+  document.querySelectorAll('.cutout').forEach(function (el) {
+    for (var i = 1; i <= 4; i++) { var s = document.createElement('i'); s.className = 'plus p' + i; el.appendChild(s); }
+  });
+
+  // Construction rays from the hero's bottom-left grid corner
+  (function () {
+    var svg = document.querySelector('.rays'), H = 1200, R = 120, out = '';
+    [15, 30, 45, 60].forEach(function (d) {
+      var r = d * Math.PI / 180, x = Math.cos(r) * 1700, y = H - Math.sin(r) * 1700;
+      out += '<line x1="0" y1="' + H + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + A(.34) + '" stroke-dasharray="5 6"/>';
+      var tx = Math.cos(r), ty = Math.sin(r);
+      out += '<line x1="' + (tx * (R - 5)).toFixed(1) + '" y1="' + (H - ty * (R - 5)).toFixed(1) + '" x2="' + (tx * (R + 5)).toFixed(1) + '" y2="' + (H - ty * (R + 5)).toFixed(1) + '" stroke="' + A(.34) + '"/>';
+    });
+    out += '<path d="M' + R + ' ' + H + 'A' + R + ' ' + R + ' 0 0 0 0 ' + (H - R) + '" fill="none" stroke="' + A(.34) + '"/>';
+    svg.innerHTML = out;
+  })();
+
+  function layout() {
+    var vw = root.clientWidth;
+    var avail = vw - RULER - 32;
+    var n = Math.max(4, Math.min(14, Math.floor(avail / (CELL * 2)) * 2));
+    var w = n * CELL;
+    var gx = RULER + Math.round(((vw - RULER) - w) / 2 / MINOR) * MINOR;
+    if (gx < RULER + 8) gx = RULER + 8;
+    root.style.setProperty('--n', n);
+    root.style.setProperty('--gx', gx + 'px');
+    if (n < 10) root.setAttribute('data-narrow', ''); else root.removeAttribute('data-narrow');
+
+    // Snap block heights to the 16px minor grid so edges land on grid lines
+    document.querySelectorAll('.snap').forEach(function (el) { el.style.minHeight = ''; });
+    document.querySelectorAll('.snap').forEach(function (el) {
+      var h = el.getBoundingClientRect().height;
+      el.style.minHeight = Math.ceil(h / MINOR) * MINOR + 'px';
+    });
+
+    // Colourful grid: cover the colour row plus two cells above and below, in whole cells
+    var cr = document.querySelector('.ftext.colour'), cg = document.querySelector('.colour-grid');
+    if (cr && cg) {
+      var top = cr.getBoundingClientRect().top + window.scrollY;
+      var rowEnd = top + (cr.nextElementSibling ? Math.max(cr.offsetHeight, cr.nextElementSibling.getBoundingClientRect().bottom + window.scrollY - top) : cr.offsetHeight);
+      var gTop = Math.floor((top - CELL * 2) / CELL) * CELL;
+      var gEnd = Math.ceil((rowEnd + CELL * 2) / CELL) * CELL;
+      cg.style.top = gTop + 'px';
+      cg.style.height = (gEnd - gTop) + 'px';
+      cg.style.setProperty('--cx', (gx + w / 2) + 'px');
+    }
+
+    // Rulers
+    var H = document.documentElement.scrollHeight;
+    var left = document.querySelector('.ruler-left');
+    left.style.height = H + 'px';
+    var s = '<svg width="' + RULER + '" height="' + H + '" shape-rendering="crispEdges"><path d="M' + (RULER - .5) + ' 0V' + H + '" stroke="' + A(.20) + '"/>';
+    for (var y = MINOR; y < H; y += MINOR) {
+      var major = y % CELL === 0, len = major ? 8 : 4;
+      s += '<path d="M' + (RULER - len) + ' ' + (y + .5) + 'H' + RULER + '" stroke="' + A(.30) + '"/>';
+      if (major) s += '<text x="' + (RULER - 12) + '" y="' + (y + 4) + '" text-anchor="end" fill="' + A(.50) + '" font-family="IBM Plex Mono, monospace" font-size="11">' + (y / CELL * 5) + '</text>';
+    }
+    left.innerHTML = s + '</svg>';
+
+    var bottom = document.querySelector('.ruler-bottom');
+    var b = '<svg width="' + vw + '" height="32" shape-rendering="crispEdges">';
+    for (var x = gx % MINOR, k = 0; x < vw; x += MINOR) {
+      var rel = x - gx, isMaj = ((rel % CELL) + CELL) % CELL === 0, L = isMaj ? 8 : 4;
+      if (x < RULER) continue;
+      b += '<path d="M' + (x + .5) + ' 0V' + L + '" stroke="' + A(.30) + '"/>';
+      if (isMaj && rel > 0 && rel < vw * .55) b += '<text x="' + x + '" y="24" text-anchor="middle" fill="' + A(.50) + '" font-family="IBM Plex Mono, monospace" font-size="11">' + (rel / CELL * 5) + '</text>';
+    }
+    bottom.innerHTML = b + '</svg>';
+  }
+
+  var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(layout, 120); });
+  layout();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+  window.addEventListener('load', layout);
+
+  // Waitlist demo: until a real action is set, confirm without reloading
+  var form = document.querySelector('.signup');
+  form.addEventListener('submit', function (e) {
+    if (form.getAttribute('action') === '#') {
+      e.preventDefault();
+      document.querySelector('.consent').innerHTML = '<span class="ok">You\'re on the list.</span> One email on launch day.';
+      form.reset();
+    }
+  });
+  document.querySelectorAll('[aria-disabled="true"]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); });
+  });
+})();
+</script>
+</body>
+</html>
