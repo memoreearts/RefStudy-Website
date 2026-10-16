@@ -3,11 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RefStudy – artists reference analyzer</title>
+<title>RefStudy – artists' reference analyzer</title>
 <meta name="description" content="RefStudy helps painters and draughtspeople measure a reference photo, see its values, mix its colours and check their drawing against it. Android, Windows and macOS.">
 <meta name="theme-color" content="#0c0b0a">
-<!-- SOCIAL PREVIEW: replace refstudy.app with your real domain once you have it -->
-<meta property="og:title" content="RefStudy – artists reference analyzer">
+<meta property="og:title" content="RefStudy – artists' reference analyzer">
 <meta property="og:description" content="Measure your reference, see its values, mix its colours and check your drawing against it.">
 <meta property="og:image" content="https://refstudy.app/assets/og-image.jpg">
 <meta property="og:url" content="https://refstudy.app/">
@@ -23,7 +22,7 @@
   --title: #f2efe9;
   --muted: #8f8a80;
   --accent: #b5a78c;
-  --line: rgba(242,239,233,0.32);
+  --line: rgba(242,239,233,0.40);
   --line-hover: rgba(242,239,233,0.85);
   --thumb: #151412;
   --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
@@ -45,6 +44,7 @@ body {
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 h1, h2, h3, p, ul { margin: 0; }
+h1, h2 { text-wrap: balance; }
 a { color: inherit; }
 img { display: block; max-width: 100%; }
 :focus-visible { outline: 1px solid var(--line-hover); outline-offset: 4px; }
@@ -97,8 +97,8 @@ img { display: block; max-width: 100%; }
     linear-gradient(var(--line), var(--line)) center / 100% 1px no-repeat;
   transition: transform .22s ease, background .22s ease;
 }
-.plus.p1 { top: -7px; left: -7px; } .plus.p2 { top: -7px; right: -7px; }
-.plus.p3 { bottom: -7px; left: -7px; } .plus.p4 { bottom: -7px; right: -7px; }
+.plus.p1 { top: -6px; left: -6px; } .plus.p2 { top: -6px; right: -6px; }
+.plus.p3 { bottom: -6px; left: -6px; } .plus.p4 { bottom: -6px; right: -6px; }
 a.cutout, button.cutout { cursor: pointer; text-decoration: none; }
 a.cutout:hover, a.cutout:focus-visible, button.cutout:hover, button.cutout:focus-visible { border-color: var(--line-hover); outline: none; }
 a.cutout:hover > .plus, a.cutout:focus-visible > .plus, button.cutout:hover > .plus, button.cutout:focus-visible > .plus {
@@ -134,7 +134,7 @@ a.cutout:hover > .plus, a.cutout:focus-visible > .plus, button.cutout:hover > .p
 .brand { grid-column: 1 / span 4; display: flex; align-items: center; gap: 14px; text-decoration: none; }
 .brand svg { width: 32px; height: 32px; }
 .brand span { font: 400 30px/1 var(--serif); color: var(--title); letter-spacing: -0.01em; }
-.header .textbtn { grid-column: -4 / -1; justify-self: end; }
+.header .textbtn { grid-column: -4 / -1; justify-self: end; padding: 15px 0; margin: -15px 0; } /* 44px tap area, same look */
 
 /* ===== Hero ===== */
 .hero { position: relative; padding-top: 80px; row-gap: 32px; }
@@ -143,23 +143,23 @@ a.cutout:hover > .plus, a.cutout:focus-visible > .plus, button.cutout:hover > .p
 .hero-copy .wordmark { font-size: clamp(56px, 8vw, 84px); }
 .hero-copy .byline { font: italic 400 20px/1 var(--serif); color: var(--accent); margin-top: 8px; }
 .hero-copy h1 { font: 400 clamp(32px, 4vw, 44px)/1.05 var(--serif); color: var(--title); letter-spacing: -0.01em; margin-top: 48px; max-width: 20ch; }
-.hero-copy .tagline { margin-top: 16px; max-width: 44ch; font-size: 16px; line-height: 1.45; }
-.readout { margin-top: 32px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.hero-copy .tagline { margin-top: 16px; max-width: 44ch; font-size: 17px; line-height: 32px; }
+.readout { margin-top: 32px; font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
 .readout b { color: var(--accent); font-weight: 400; }
 
 .shot { grid-column: -5 / -1; grid-row: 1 / span 3; align-self: start; height: calc(var(--cell) * 8); overflow: visible; }
 .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
 .signup { grid-column: 1 / -6; display: grid; grid-template-columns: 1fr auto; gap: 0; }
-.signup .field { height: 64px; display: flex; }
+.signup .field { height: 80px; display: flex; }
 .signup input {
   flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; color: var(--title);
-  font: 400 15px var(--sans); padding: 0 20px; outline: none;
+  font: 400 16px/16px var(--sans); padding: 0 32px; outline: none;
 }
 .signup input::placeholder { color: var(--muted); }
 .signup .field:focus-within { border-color: var(--line-hover); }
-.signup button.cutout { height: 64px; border-left: 0; width: auto; padding: 0 28px; }
-.consent { grid-column: 1 / -6; font: 400 11px/16px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); min-height: 32px; }
+.signup button.cutout { height: 80px; border-left: 0; width: auto; padding: 0 16px; }
+.consent { grid-column: 1 / -6; padding-top: 8px; font: 400 12px/16px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); min-height: 32px; }
 .consent .ok { color: var(--accent); }
 
 /* ===== Features ===== */
@@ -197,8 +197,8 @@ a.cutout:hover > .plus, a.cutout:focus-visible > .plus, button.cutout:hover > .p
 
 /* ===== Levels ===== */
 .levels p.big { grid-column: 1 / -1; font: 400 clamp(22px, 2.6vw, 28px)/1.3 var(--serif); color: var(--muted); max-width: 34ch; }
-.mediums { grid-column: 1 / -1; margin-top: 32px; list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0; }
-.mediums li { font: 400 12px/48px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); padding: 0 20px; border: 1px solid var(--line); margin: 0 -1px -1px 0; background: var(--ground); }
+.mediums { grid-column: 1 / -1; margin-top: 32px; list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, calc(var(--cell) * 2)); gap: 0; }
+.mediums li { font: 400 12px/16px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); padding: 0 16px; display: flex; align-items: center; height: 80px; }
 
 /* ===== Get it ===== */
 .get .actions { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, calc(var(--cell) * 5)); gap: 32px; }
@@ -209,14 +209,14 @@ a.cutout:hover > .plus, a.cutout:focus-visible > .plus, button.cutout:hover > .p
 /* ===== Footer ruler ===== */
 .footer { position: relative; margin-top: 160px; height: 32px; z-index: 6; }
 .ruler-bottom { position: absolute; left: 0; right: 0; top: 0; height: 32px; background: var(--ground); border-top: 1px solid rgba(242,239,233,.20); }
-.footer .meta { position: absolute; right: 24px; top: 0; height: 32px; display: flex; align-items: center; gap: 24px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
-.footer .meta a { text-decoration: none; }
+.footer .meta { position: absolute; right: 24px; top: 0; height: 32px; display: flex; align-items: center; gap: 24px; font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.footer .meta a { text-decoration: none; padding: 10px 0; margin: -10px 0; } /* bigger tap area */
 .footer .meta a:hover { color: var(--title); }
 .footer-pad { height: 24px; }
 
 /* ===== Narrow screens ===== */
 html[data-narrow] .hero-copy, html[data-narrow] .signup, html[data-narrow] .consent { grid-column: 1 / -1; }
-html[data-narrow] .hero-copy { padding: 32px 24px 31px; }
+html[data-narrow] .hero-copy { padding: 32px; }
 html[data-narrow] .shot { grid-column: 1 / -1; grid-row: auto; height: calc(var(--cell) * 8); }
 html[data-narrow] .feature.fa, html[data-narrow] .feature.fb { grid-column: 1 / -1; }
 html[data-narrow] .brand { grid-column: 1 / span 2; }
@@ -226,6 +226,11 @@ html[data-narrow] .signup { grid-template-columns: 1fr; }
 html[data-narrow] .signup button.cutout { border-left: 1px solid var(--line); border-top: 0; }
 html[data-narrow] .footer .meta .soc { display: none; }
 html[data-narrow] .header .long { display: none; }
+html[data-n="3"] .header .textbtn { grid-column: -2 / -1; }
+html[data-n="3"] .signup, html[data-n="3"] .hero .signup, html[data-n="3"] .wait .signup { grid-template-columns: minmax(0, 1fr); }
+html[data-n="3"] .signup .field, html[data-n="3"] .signup button.cutout { min-width: 0; }
+html[data-n="3"] .signup button.cutout > * { white-space: normal; min-width: 0; }
+html[data-n="3"] .signup input { padding: 0 16px; }
 
 /* ===== Load-in ===== */
 @media (prefers-reduced-motion: no-preference) {
@@ -238,14 +243,19 @@ html[data-narrow] .header .long { display: none; }
 
 /* ===== v2 layout ===== */
 .hero-copy { grid-column: 1 / -6; }
-.hero-copy .sub { margin-top: 10px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .22em; color: var(--muted); }
-.hero-copy h1 { margin-top: 40px; }
+.hero-copy .sub { font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .22em; color: var(--muted); }
+.hero-copy .sub i { font: italic 400 18px/0 var(--serif); text-transform: none; letter-spacing: 0; color: var(--accent); margin-left: .5em; }
+.hero-copy h1 { margin-top: 28px; font-size: clamp(36px, 4.6vw, 56px); }
+.hero .signup { grid-column: 1 / -6; grid-template-columns: 1fr calc(var(--cell) * 4); }
+.wait .signup { grid-template-columns: 1fr calc(var(--cell) * 2); }
+html[data-n="10"] .hero .signup, html[data-n="12"] .hero .signup { grid-template-columns: 1fr; }
+html[data-n="10"] .hero .signup button.cutout, html[data-n="12"] .hero .signup button.cutout { border-left: 1px solid var(--line); border-top: 0; }
 .acts { grid-column: 1 / -6; display: grid; grid-template-columns: repeat(3, 1fr); }
-.acts .cutout { height: 64px; margin-left: -1px; }
+.acts .cutout { height: 80px; }
 .acts .cutout:first-child { margin-left: 0; }
 .acts .action { font-size: 12px; letter-spacing: .14em; gap: .7em; }
-.hero-note { grid-column: 1 / -6; font: 400 11px/32px var(--mono); text-transform: uppercase; letter-spacing: .14em; height: 32px; }
-.hero-note b { color: var(--accent); font-weight: 400; }
+.hero-note { grid-column: 1 / -6; font: 400 12px/32px var(--mono); text-transform: uppercase; letter-spacing: .14em; height: 32px; }
+.hero-note b, .hero-note .ok { color: var(--accent); font-weight: 400; }
 .hero-note a { color: var(--title); }
 .hero-media { grid-column: -5 / -1; grid-row: 1 / span 3; align-self: start; height: calc(var(--cell) * 8); margin: 0; }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: .55; }
@@ -255,7 +265,7 @@ html[data-narrow] .header .long { display: none; }
   background:
     repeating-linear-gradient(135deg, rgba(242,239,233,.035) 0 1px, transparent 1px 12px),
     var(--ground); }
-.slot-in { position: absolute; inset: 0; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.slot-in { position: absolute; inset: 0; padding: 32px; display: flex; flex-direction: column; gap: 14px; }
 .hero-media .slot-in { top: auto; background: linear-gradient(transparent, rgba(12,11,10,.92) 30%); padding-top: 64px; }
 .slot-id { font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--accent); }
 .slot-what { color: var(--title); font-size: 15px; line-height: 1.45; max-width: 40ch; }
@@ -268,8 +278,8 @@ html[data-narrow] .header .long { display: none; }
 .ftext .fl { font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); }
 .ftext .fl .num { color: var(--accent); margin-right: .7em; }
 .ftext h3 { font: 400 clamp(30px, 3.2vw, 40px)/1.05 var(--serif); color: var(--title); letter-spacing: -0.01em; margin-top: 24px; }
-.ftext p.d { margin-top: 12px; max-width: 40ch; font-size: 16px; line-height: 1.45; }
-.ftext .tag { margin-top: auto; padding-top: 24px; font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.ftext p.d { margin-top: 16px; max-width: 40ch; font-size: 17px; line-height: 32px; }
+.ftext .tag { margin-top: auto; padding-top: 24px; font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
 .ftext .tag b { color: var(--accent); font-weight: 400; }
 .frows .slot { grid-column: 8 / span 6; height: calc(var(--cell) * 6); }
 .frows .also { grid-column: 1 / -1; margin-top: 0; }
@@ -284,25 +294,72 @@ html[data-narrow] .header .long { display: none; }
 .who .mediums { margin-top: 0; }
 
 /* get */
-.get .acts { grid-column: 1 / span 10; }
-.get p.small { grid-column: 1 / -1; margin-top: 24px; max-width: 60ch; font-size: 15px; }
+.get .acts { grid-column: 1 / span 9; }
+.get p.small { grid-column: 1 / -1; margin-top: 32px; max-width: 60ch; font-size: 17px; line-height: 32px; }
 
 /* faq */
 .faq-list { grid-column: 1 / span 10; display: grid; }
-.faq-list details { margin-top: -1px; }
-.faq-list summary { list-style: none; cursor: pointer; padding: 22px 56px 22px 24px; position: relative;
+
+.faq-list summary { list-style: none; cursor: pointer; padding: 24px 64px 23px 32px; position: relative;  /* closed row = exactly one cell */
   font: 400 24px/1.15 var(--serif); color: var(--title); }
 .faq-list summary::-webkit-details-marker { display: none; }
-.faq-list summary::after { content: "+"; position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+.faq-list summary::after { content: "+"; position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
   font: 400 18px var(--mono); color: var(--accent); }
 .faq-list details[open] summary::after { content: "–"; }
-.faq-list details p { padding: 0 24px 24px; max-width: 60ch; font-size: 15px; line-height: 1.5; }
+.faq-list details p { padding: 0 32px 32px; max-width: 60ch; font-size: 17px; line-height: 32px; }
 
 /* waitlist */
 .wait .signup, .wait .consent { grid-column: 1 / span 8; }
 
 /* real media inside a frame: replaces the placeholder text */
 .slot video, .slot img.media, .hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* before/after wipe: two identical-size images, the after one clipped at --pos */
+.wipe { cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.wipe img.media { pointer-events: none; }
+.wipe .wipe-after { clip-path: inset(0 0 0 var(--pos, 50%)); }
+.wipe-line { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 1px; margin-left: -.5px; background: var(--accent); pointer-events: none; z-index: 2; }
+.wipe-line::after { content: "\2039\00a0\203A"; position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; transform: translate(-50%, -50%);
+  display: grid; place-items: center; background: var(--ground); border: 1px solid var(--accent); color: var(--accent); font: 400 16px/1 var(--mono); }
+.wipe:focus-within .wipe-line::after { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wipe-lab { position: absolute; top: 16px; z-index: 2; pointer-events: none; padding: 6px 10px; background: rgba(12,11,10,.75);
+  font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); }
+.wipe-lab.l { left: 16px; } .wipe-lab.r { right: 16px; color: var(--accent); }
+.wipe-range { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); margin: 0; }
+
+/* stepper: stacked same-size images that crossfade, with tabs and a caption */
+.shade img.media { opacity: 0; transition: opacity .6s ease; }
+.shade img.media.on { opacity: 1; }
+.shade-tabs { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px; }
+.shade-tabs button { position: relative; cursor: pointer; padding: 6px 10px; border: 1px solid var(--line); background: rgba(12,11,10,.9);
+  font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--title); transition: border-color .2s ease, color .2s ease; }
+.shade-tabs button .n { color: #bdb8ae; margin-right: .6em; }
+.shade-tabs button::before { content: ""; position: absolute; inset: -9px -4px; }   /* 44px tall tap area, same look */
+.shade-tabs button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.shade-tabs button[aria-pressed="true"] .n { color: var(--accent); }
+.shade-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shade-tabs button i { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--accent); }
+.shade.playing .shade-tabs button[aria-pressed="true"] i { animation: shade-bar var(--dur, 4s) linear forwards; }
+@keyframes shade-bar { to { width: 100%; } }
+.ftext .shade-cap { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); max-width: 46ch; }
+.shade-cap > div { display: none; }
+.shade-cap > div.on { display: block; animation: shade-in .4s ease both; }
+@keyframes shade-in { from { opacity: 0; } }
+.ftext .shade-cap p { margin: 0; }
+.ftext .shade-cap .t { font: 400 11px var(--mono); text-transform: uppercase; letter-spacing: .18em; color: var(--accent); }
+.ftext .shade-cap .d { margin-top: 8px; color: var(--title); font-size: 15px; line-height: 24px; }
+.ftext .shade-cap .w { margin-top: 6px; color: var(--muted); font-size: 15px; line-height: 24px; }
+html[data-narrow] .shade-tabs { top: 12px; left: 12px; right: 12px; gap: 6px; }
+html[data-narrow] .shade-tabs button { padding: 5px 7px; letter-spacing: .1em; font-size: 10px; }
+@media (prefers-reduced-motion: reduce) { .shade img.media { transition: none; } }
+
+/* pause / play button on the demo videos */
+.vid-toggle { position: absolute; right: 12px; bottom: 12px; z-index: 3; width: 32px; height: 32px; padding: 0; cursor: pointer;
+  display: grid; place-items: center; border: 1px solid var(--line); background: rgba(12,11,10,.9); color: var(--title); }
+.vid-toggle::before { content: ""; position: absolute; inset: -6px; }   /* 44px tap area */
+.vid-toggle:hover, .vid-toggle:focus-visible { border-color: var(--accent); color: var(--accent); }
+.vid-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vid-toggle svg { width: 12px; height: 12px; fill: currentColor; }
 
 /* colourful grid behind the colour section */
 .colour-grid { position: absolute; left: 0; right: 0; z-index: 1; pointer-events: none;
@@ -314,18 +371,23 @@ html[data-narrow] .header .long { display: none; }
           mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' shape-rendering='crispEdges'%3E%3Cg stroke='rgba(0,0,0,0.28)'%3E%3Cpath d='M16.5 0V80M32.5 0V80M48.5 0V80M64.5 0V80M0 16.5H80M0 32.5H80M0 48.5H80M0 64.5H80'/%3E%3C/g%3E%3Cpath d='M0.5 0V80M0 0.5H80' stroke='rgba(0,0,0,0.75)'/%3E%3Cpath d='M0.5 0V4M0.5 77V80M0 0.5H4M77 0.5H80' stroke='%23000'/%3E%3C/svg%3E");
   -webkit-mask-position: var(--gx) 0; mask-position: var(--gx) 0; }
 
+/* ===== Edge runner: a light that laps the email box border, trail fades over 1s ===== */
+.signup { position: relative; }
+.edge-run { position: absolute; left: -12px; top: -12px; pointer-events: none; z-index: 3; }
+
 /* narrow screens */
+html[data-narrow] .hero .signup,
 html[data-narrow] .hero-copy, html[data-narrow] .acts, html[data-narrow] .hero-note,
 html[data-narrow] .ftext, html[data-narrow] .frows .slot, html[data-narrow] .proof .slot.a, html[data-narrow] .proof .slot.b,
 html[data-narrow] .get .acts, html[data-narrow] .faq-list, html[data-narrow] .wait .signup, html[data-narrow] .wait .consent { grid-column: 1 / -1; }
 html[data-narrow] .hero-media { grid-column: 1 / -1; grid-row: auto; }
 html[data-narrow] .acts { grid-template-columns: 1fr; }
-html[data-narrow] .acts .cutout { margin-left: 0; margin-top: -1px; }
-html[data-narrow] .hero-note { height: auto; line-height: 1.6; padding: 6px 0; }
+
+html[data-narrow] .hero-note { height: auto; line-height: 16px; padding: 8px 0; }
 html[data-narrow] .frows { row-gap: 0; }
 html[data-narrow] .ftext { margin-top: 48px; }
 html[data-narrow] .frows .slot, html[data-narrow] .proof .slot { height: calc(var(--cell) * 5); }
-html[data-narrow] .frows .slot { margin-top: -1px; }
+
 html[data-narrow] .proof .slot.a { margin-bottom: 64px; }
 html[data-narrow] .faq-list summary { font-size: 20px; }
 </style>
@@ -343,7 +405,7 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
 
 <div class="page">
 
-  <header class="cols header snap">
+  <header class="cols header">
     <a class="brand" href="#" aria-label="RefStudy home">
       <svg viewBox="0 0 288 288" aria-hidden="true">
         <path d="M0 52V0H52M236 0H288V52M288 236V288H236M52 288H0V236" stroke="rgba(242,239,233,0.75)" stroke-width="12" fill="none" stroke-linecap="square"/>
@@ -360,81 +422,95 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
     <section class="cols hero">
       <svg class="rays" viewBox="0 0 1200 1200" aria-hidden="true"></svg>
 
-      <div class="cutout hero-copy snap rise" style="--i:0">
-        <p class="serif wordmark">RefStudy</p>
-        <p class="byline">by MemoreeArt</p>
-        <p class="sub">Artists reference analyzer</p>
+      <div class="cutout hero-copy rise" style="--i:0">
+        <p class="sub">Artists' reference analyzer<i>by MemoreeArt</i></p>
         <h1>Study your reference the way a trained eye does.</h1>
         <p class="tagline">Measure it, see its values, mix its colours and check your drawing against it.</p>
         <p class="readout">Everything free until <b>11 Feb 2027</b></p>
       </div>
 
-      <!-- On launch day: add the real links and remove aria-disabled -->
-      <div class="acts snap rise" style="--i:1">
-        <a class="cutout action" href="#" aria-disabled="true"><span class="num">01</span><span>/ Use on web</span></a>
-        <a class="cutout action second" href="#" aria-disabled="true"><span class="num">02</span><span>/ Google Play</span></a>
-        <a class="cutout action second" href="#" aria-disabled="true"><span class="num">03</span><span>/ Windows &amp; Mac</span></a>
+      <!-- PRE-LAUNCH: the email form is the hero action.
+           ON LAUNCH DAY: delete this form + note and uncomment the store buttons below (add real links, remove aria-disabled). -->
+      <form class="signup rise" style="--i:1" action="https://app.kit.com/forms/10040463/subscriptions" method="post">
+        <div class="cutout field">
+          <label for="email-hero" style="position:absolute;left:-9999px">Email address</label>
+          <input id="email-hero" name="email_address" type="email" placeholder="Your email address" autocomplete="email" required>
+        </div>
+        <button class="cutout action" type="submit"><span>Email me on launch day</span></button>
+      </form>
+      <p class="hero-note" role="status" aria-live="polite">Out <b>30 Oct 2026</b> · Web, Android, Windows &amp; Mac · one email, unsubscribe anytime</p>
+      <!--
+      <div class="acts rise" style="--i:1">
+        <a class="cutout action" href="#"><span class="num">01</span><span>/ Use on web</span></a>
+        <a class="cutout action second" href="#"><span class="num">02</span><span>/ Google Play</span></a>
+        <a class="cutout action second" href="#"><span class="num">03</span><span>/ Windows &amp; Mac</span></a>
       </div>
-      <p class="hero-note snap">Available <b>30 Oct 2026</b> · <a class="textbtn" href="#waitlist" style="font-size:11px">get an email on launch day</a></p>
+      <p class="hero-note">Free until <b>11 Feb 2027</b></p>
+      -->
 
       <figure class="cutout hero-media rise" style="--i:2">
-        <img src="assets/app-home.jpg" alt="">
-        <div class="slot-in"><p class="slot-id">Clip 01 · Hero loop</p>
-          <p class="slot-what">The "aha" in one shot: a reference photo on the phone, one tap, and dividers and value steps appear over it. Show the result within 2 seconds.</p>
-          <p class="slot-spec">Silent loop, 5–8 s · 1:2 vertical (720 × 1440) · screen recording · MP4 under 2 MB</p></div>
+        <video src="assets/clip-01-hero.mp4" poster="assets/clip-01-hero.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video>
       </figure>
     </section>
 
     <!-- 2. FOUR SHOW-DON'T-TELL BLOCKS -->
     <section class="cols section frows" aria-labelledby="what">
-      <p class="label snap full">What it does</p>
-      <h2 id="what" class="snap full" style="margin-bottom:0">Everything you check by eye, laid over the photo.</h2>
+      <p class="label full">What it does</p>
+      <h2 id="what" class="full" style="margin-bottom:0">Everything you check by eye, laid over the photo.</h2>
       
       <div class="cutout ftext rise"><p class="fl"><span class="num">01</span>/ Measure</p><h3>Measure anything</h3><p class="d">Dividers, grids and perspective guides over your photo, so you can see where everything should land.</p><p class="tag"><b>All platforms</b> · drawing &amp; painting</p></div>
-      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 02 · Measure</p><p class="slot-what">Phone beside a figure drawing. One tap: a vertical divider drops onto the reference and splits the figure into heads. Then a grid appears over it.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <figure class="cutout slot  rise"><video src="assets/clip-02-measure.mp4" poster="assets/clip-02-measure.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></figure>
       <div class="cutout ftext rise"><p class="fl"><span class="num">02</span>/ Values</p><h3>See the values</h3><p class="d">Turn any photo into 2 to 9 flat values or big simple shapes, so you know what to block in first.</p><p class="tag"><b>All platforms</b> · drawing &amp; painting</p></div>
-      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 03 · Values</p><p class="slot-what">A portrait photo. Tap Value steps: it snaps to 5 values, then the slider drags down to 2 (black and white). End on the 2-value version.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <figure class="cutout slot  rise"><video src="assets/clip-03-values.mp4" poster="assets/clip-03-values.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></figure>
       <div class="cutout ftext rise"><p class="fl"><span class="num">03</span>/ Check my drawing</p><h3>Score your drawing</h3><p class="d">Photograph your drawing, tap a few landmarks, and see how close you got and exactly what's off.</p><p class="tag"><b>Android</b> · uses the phone camera</p></div>
-      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 04 · Check my drawing</p><p class="slot-what">Phone photographs a pencil drawing on the desk. Cut to the result: the score counts up into the ring, markers appear, then the morph slider pulls the drawing into correct proportions.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
+      <figure class="cutout slot  rise"><video src="assets/clip-04-check.mp4" poster="assets/clip-04-check.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></figure>
       <div class="cutout ftext colour rise"><p class="fl"><span class="num">04</span>/ Colour</p><h3>Mix what you see</h3><p class="d">Point at any colour and get a mixing recipe made from the paints you actually own.</p><p class="tag"><b>Android &amp; desktop</b> · painting mode</p></div>
-      <figure class="cutout slot  rise"><div class="slot-in"><p class="slot-id">Clip 05 · Colour</p><p class="slot-what">Painting in progress, palette in frame. Tap a shadow colour with the Color lens; the recipe card opens. Cut to the brush mixing it on the palette.</p><p class="slot-spec">Silent loop, 6–8 s · 1:1 square (1080 × 1080) · MP4 under 2 MB</p></div></figure>
-      <p class="also snap">Also: <span>Block Out</span> · <span>Squint</span> · <span>Perspective grids</span> · <span>Golden spiral</span> · <span>Isolate</span> · <span>Camera check</span> · <span>Session timer</span></p>
+      <figure class="cutout slot  rise"><video src="assets/Clip-05-color.mp4" poster="assets/Clip-05-color.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></figure>
+      <div class="cutout ftext rise"><p class="fl"><span class="num">05</span>/ Isolate</p><h3>Find it everywhere</h3><p class="d">Pick a colour, a range of values, warm or cool, or vivid or muted. Everything else greys out, so you see every place it appears.</p><p class="tag"><b>All platforms</b> · drawing &amp; painting</p></div>
+      <figure class="cutout slot  rise" data-colour-end><video src="assets/Clip-06-isolate.mp4" poster="assets/Clip-06-isolate.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video></figure>
+      <div class="cutout ftext rise"><p class="fl"><span class="num">06</span>/ No detail</p><h3>See the big forms</h3><p class="d">Smooths away skin texture, pores and stray hairs but keeps the values, gradients and dark accents. You see the big shapes of light and shadow to draw first, without the detail pulling your eye.</p><p class="tag"><b>All platforms</b> · drawing mode</p></div>
+      <figure class="cutout slot wipe rise" style="--pos:50%"><img class="media" src="assets/no-detail-before.jpg" alt="Reference photo of a portrait" width="832" height="752"><img class="media wipe-after" src="assets/no-detail-after.jpg" alt="The same photo with No detail on: texture smoothed, values kept" width="832" height="752"><span class="wipe-line" aria-hidden="true"></span><span class="wipe-lab l" aria-hidden="true">Photo</span><span class="wipe-lab r" aria-hidden="true">No detail</span><input class="wipe-range" type="range" min="0" max="100" value="50" aria-label="Slide between the photo and No detail"></figure>
+      <div class="cutout ftext rise"><p class="fl"><span class="num">07</span>/ Shading</p><h3>Read the light</h3><p class="d">See the photo as big shapes of light and shadow, then add the detail back one band at a time. You learn to see form, not copy detail.</p><div class="shade-cap"><div class="on"><p class="t">1 / Shading</p><p class="d">Big shapes of light and shadow, no detail. The shadow shape is what makes a head look solid, so get it right first.</p></div><div><p class="t">2 / Darks</p><p class="d">The darkest accents come back: strands of hair, lashes, the corner of the mouth. They anchor the drawing.</p></div><div><p class="t">3 / Lights</p><p class="d">The features and halftones in the light return. Detail lives in the light, so that is where your effort goes.</p></div><div><p class="t">4 / Brights</p><p class="d">The brightest highlights go on last. They are small and few, and saving them for the end keeps them clean.</p></div></div><p class="tag"><b>All platforms</b> · drawing mode</p></div>
+      <figure class="cutout slot shade rise"><img class="media on" src="assets/shading-1-shading.jpg" alt="Shading mode: shading" width="726" height="680"><img class="media" src="assets/shading-2-darks.jpg" alt="Shading mode: darks" width="726" height="680" loading="lazy"><img class="media" src="assets/shading-3-lights.jpg" alt="Shading mode: lights" width="726" height="680" loading="lazy"><img class="media" src="assets/shading-4-brights.jpg" alt="Shading mode: brights" width="726" height="680" loading="lazy"><div class="shade-tabs" role="group" aria-label="Shading steps"><button type="button" aria-pressed="true"><span class="n">1</span>Shading<i></i></button><button type="button" aria-pressed="false"><span class="n">2</span>Darks<i></i></button><button type="button" aria-pressed="false"><span class="n">3</span>Lights<i></i></button><button type="button" aria-pressed="false"><span class="n">4</span>Brights<i></i></button></div></figure>
+      <div class="cutout ftext rise"><p class="fl"><span class="num">08</span>/ Underpainting</p><h3>Paint it in stages</h3><p class="d">Your photo becomes a one-colour underpainting. Bring back darks, halftones, midtones and highlights one at a time and paint each in turn.</p><div class="shade-cap"><div class="on"><p class="t">1 / Underpainting</p><p class="d">The whole photo in one warm tone. You see the pattern of light and shadow before colour gets in the way.</p></div><div><p class="t">2 / Darks</p><p class="d">The darkest colours come back first: hair and the deepest shadows. Block these in and the picture already holds together.</p></div><div><p class="t">3 / Halftones</p><p class="d">The colours where the form turns from light into shadow. This is where a painting gets its sense of volume.</p></div><div><p class="t">4 / Midtones</p><p class="d">The big lit areas fill in: skin and wall. Most of your colour mixing happens here, one band at a time.</p></div><div><p class="t">5 / Highlights</p><p class="d">The brightest lights go on last, like the glowing window. With every band on, you are back to the photo.</p></div></div><p class="tag"><b>All platforms</b> · painting mode</p></div>
+      <figure class="cutout slot shade rise"><img class="media on" src="assets/values-1-underpainting.jpg" alt="Values in painting mode: underpainting" width="708" height="644"><img class="media" src="assets/values-2-darks.jpg" alt="Values in painting mode: darks" width="708" height="644" loading="lazy"><img class="media" src="assets/values-3-halftones.jpg" alt="Values in painting mode: halftones" width="708" height="644" loading="lazy"><img class="media" src="assets/values-4-midtones.jpg" alt="Values in painting mode: midtones" width="708" height="644" loading="lazy"><img class="media" src="assets/values-5-highlights.jpg" alt="Values in painting mode: highlights" width="708" height="644" loading="lazy"><div class="shade-tabs" role="group" aria-label="Underpainting steps"><button type="button" aria-pressed="true"><span class="n">1</span>Underpainting<i></i></button><button type="button" aria-pressed="false"><span class="n">2</span>Darks<i></i></button><button type="button" aria-pressed="false"><span class="n">3</span>Halftones<i></i></button><button type="button" aria-pressed="false"><span class="n">4</span>Midtones<i></i></button><button type="button" aria-pressed="false"><span class="n">5</span>Highlights<i></i></button></div></figure>
+      <p class="also">Also: <span>Block Out</span> · <span>Squint</span> · <span>Perspective grids</span> · <span>Golden spiral</span> · <span>Camera check</span> · <span>Session timer</span></p>
     </section>
 
     <!-- 3. ONE PROOF IMAGE -->
     <section class="cols section proof" aria-labelledby="proof">
-      <p class="label snap full">Does it help?</p>
-      <h2 id="proof" class="snap full">Same reference. Same hour.</h2>
+      <p class="label full">Does it help?</p>
+      <h2 id="proof" class="full">Same reference. Same hour.</h2>
       <figure class="cutout slot a rise"><div class="slot-in"><p class="slot-id">Image 06 · Before</p><p class="slot-what">Your drawing of a portrait done the usual way, no tools. Photographed flat, even light, same framing as the after.</p><p class="slot-spec">Still image · 6:7 (1200 × 1400) · JPG</p></div><p class="slot-cap">Without RefStudy</p></figure>
       <figure class="cutout slot b rise"><div class="slot-in"><p class="slot-id">Image 07 · After</p><p class="slot-what">The same reference drawn again using dividers and value steps. Same paper, same time limit, same lighting as the before.</p><p class="slot-spec">Still image · 6:7 (1200 × 1400) · JPG</p></div><p class="slot-cap">With RefStudy</p></figure>
     </section>
 
     <!-- 4. WHO IT'S FOR, IN ONE LINE -->
     <section class="cols section who" aria-labelledby="who">
-      <p class="label snap full">Who it's for</p>
-      <h2 id="who" class="snap full">Pencil to oil. First sketch to hundredth painting.</h2>
-      <ul class="mediums snap" aria-label="Works with any medium">
-        <li>Pencil</li><li>Charcoal</li><li>Ink</li><li>Oil</li><li>Acrylic</li><li>Gouache</li><li>Watercolour</li><li>Digital</li>
+      <p class="label full">Who it's for</p>
+      <h2 id="who" class="full">Pencil to oil. First sketch to hundredth painting.</h2>
+      <ul class="mediums" aria-label="Works with any medium">
+        <li class="cutout"><span>Pencil</span></li><li class="cutout"><span>Charcoal</span></li><li class="cutout"><span>Ink</span></li><li class="cutout"><span>Oil</span></li><li class="cutout"><span>Acrylic</span></li><li class="cutout"><span>Gouache</span></li><li class="cutout"><span>Watercolour</span></li><li class="cutout"><span>Digital</span></li>
       </ul>
     </section>
 
     <!-- 5. PRICE AND PLATFORMS -->
     <section class="cols section get" aria-labelledby="get">
-      <p class="label snap full">Get RefStudy</p>
-      <h2 id="get" class="snap full">Free until 11 February 2027.</h2>
-      <div class="acts snap">
+      <p class="label full">Get RefStudy</p>
+      <h2 id="get" class="full">Free until 11 February 2027.</h2>
+      <div class="acts">
         <a class="cutout action" href="#" aria-disabled="true"><span class="num">01</span><span>/ Use on web</span></a>
         <a class="cutout action second" href="#" aria-disabled="true"><span class="num">02</span><span>/ Google Play</span></a>
         <a class="cutout action second" href="#" aria-disabled="true"><span class="num">03</span><span>/ Windows &amp; Mac</span></a>
       </div>
-      <p class="small snap">Every tool works on Android, Windows and Mac. Check my drawing and Camera check use the phone camera, so they're on Android.</p>
+      <p class="small">Out 30 October 2026. Every tool works on Android, Windows and Mac. Check my drawing and Camera check use the phone camera, so they're on Android.</p>
     </section>
 
     <!-- 6. FAQ -->
     <section class="cols section faq" aria-labelledby="faq">
-      <p class="label snap full">Questions</p>
-      <h2 id="faq" class="snap full">Before you download.</h2>
-      <div class="faq-list snap">
+      <p class="label full">Questions</p>
+      <h2 id="faq" class="full">Before you download.</h2>
+      <div class="faq-list">
         <details class="cutout"><summary>Is it on iPhone or iPad?</summary><p>Not yet. RefStudy is on Android, Windows and Mac. Get the launch email and you'll hear first when that changes.</p></details>
         <details class="cutout"><summary>Are my photos uploaded anywhere?</summary><p>No. Everything is processed on your own device, and projects are saved as files on your device.</p></details>
         <details class="cutout"><summary>Does it work offline?</summary><p>Yes. The Android and desktop apps work without an internet connection.</p></details>
@@ -445,24 +521,24 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
 
     <!-- 7. LAUNCH EMAIL -->
     <section class="cols section wait" aria-labelledby="waitlist-h">
-      <p class="label snap full">Launch day</p>
-      <h2 id="waitlist-h" class="snap full">Get an email when it's out.</h2>
-      <!-- WAITLIST: replace action="#" with your Kit form URL -->
-      <form class="signup snap" id="waitlist" action="https://app.kit.com/forms/10040463/subscriptions" method="post">
+      <p class="label full">Launch day</p>
+      <h2 id="waitlist-h" class="full">Get an email when it's out.</h2>
+      <form class="signup" id="waitlist" action="https://app.kit.com/forms/10040463/subscriptions" method="post">
         <div class="cutout field">
           <label for="email" style="position:absolute;left:-9999px">Email address</label>
           <input id="email" name="email_address" type="email" placeholder="Your email address" autocomplete="email" required>
         </div>
-        <button class="cutout action" type="submit"><span class="num">01</span><span>/ Notify me</span></button>
+        <button class="cutout action" type="submit"><span>Notify me</span></button>
       </form>
-      <p class="consent snap" role="status" aria-live="polite">One email on launch day. Unsubscribe anytime.</p>
+      <p class="consent" role="status" aria-live="polite">One email on launch day. Unsubscribe anytime.</p>
     </section>
   </main>
 
   <footer class="footer">
     <div class="ruler-bottom" aria-hidden="true"></div>
     <div class="meta">
-      <a class="soc" href="#">YouTube</a><a class="soc" href="#">Instagram</a><a class="soc" href="#">TikTok</a>
+      <!-- Add back with real profile URLs:
+      <a class="soc" href="">YouTube</a><a class="soc" href="">Instagram</a><a class="soc" href="">TikTok</a> -->
       <a href="privacy.html">Privacy</a><span>MemoreeArt · RefStudy · V1.0</span>
     </div>
   </footer>
@@ -493,10 +569,85 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
     svg.innerHTML = out;
   })();
 
+
+  // ===== Grid alignment =====
+  // Cutouts: top and bottom borders on major (80px) lines, right border on a column line,
+  // so the corner + marks sit on the grid's own + marks. Text: every baseline on a 16px line.
+  var TEXT = 'h1, h2, h3, p, summary, .mediums li > span, .action > span, .brand span, .header .textbtn, .footer .meta > *';
+  function bodyTop() { return document.body.getBoundingClientRect().top; }
+  function shiftY(el) {                    // translateY from our nudges and load-in animations on el and its ancestors
+    var y = 0;
+    for (var a = el; a && a !== document.body; a = a.parentElement) {
+      var tf = getComputedStyle(a).transform;
+      if (tf && tf !== 'none') y += new DOMMatrixReadOnly(tf).m42;
+    }
+    return y;
+  }
+  function topOf(el) { return el.getBoundingClientRect().top - bodyTop() - shiftY(el); }
+  function topLevelCutouts() {
+    var out = [];
+    document.querySelectorAll('.cutout').forEach(function (c) {
+      if (!c.parentElement.closest('.cutout')) out.push(c);
+    });
+    return out;
+  }
+  function alignToGrid() {
+    var cuts = topLevelCutouts(), texts = document.querySelectorAll(TEXT), foot = document.querySelector('.footer');
+    // reset what the last pass set
+    cuts.concat([foot]).forEach(function (c) { c.style.marginTop = ''; c.style.minHeight = ''; c.style.marginRight = ''; c.style.width = ''; });
+    texts.forEach(function (t) { t.style.transform = ''; t.style.lineHeight = ''; });
+    var inp = document.querySelectorAll('.signup input'); inp.forEach(function (i) { i.style.transform = ''; });
+
+    // 1. line heights: whole multiples of 16 so every line of a block lands on a line
+    texts.forEach(function (t) {
+      var cs = getComputedStyle(t), fs = parseFloat(cs.fontSize), lh = parseFloat(cs.lineHeight);
+      if (isNaN(lh)) lh = fs * 1.2;
+      var g = Math.max(MINOR, Math.ceil(lh / MINOR - 0.01) * MINOR);
+      if (Math.abs(g - lh) > 0.01) t.style.lineHeight = g + 'px';
+    });
+
+    // 2. cutouts, top to bottom: top onto a major line, height to whole cells (+1px so the bottom border sits on the line)
+    cuts.concat([foot]).forEach(function (c) {
+      var isCut = c !== foot;
+      if (isCut) {
+        c.style.marginRight = '-1px'; c.style.width = '';
+        var w = c.getBoundingClientRect().width;
+        if (Math.abs((w - 1) / CELL - Math.round((w - 1) / CELL)) > 0.001) c.style.width = (w + 1) + 'px';
+      }
+      var top = topOf(c), target = Math.ceil((top - 1) / CELL) * CELL, d = target - top;
+      if (Math.abs(d) > 0.01) c.style.marginTop = (parseFloat(getComputedStyle(c).marginTop) + d) + 'px';
+      if (!isCut) return;
+      var h = c.getBoundingClientRect().height, want = Math.max(1, Math.ceil((h - 1 - 0.01) / CELL)) * CELL + 1;
+      if (Math.abs(want - h) > 0.01) c.style.minHeight = want + 'px';
+    });
+
+    // 3. text: nudge each block so its first baseline is on the nearest 16px line
+    texts.forEach(function (t) {
+      var probe = document.createElement('span');
+      probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+      t.insertBefore(probe, t.firstChild);
+      var b = topOf(probe); t.removeChild(probe);
+      var d = Math.round(b / MINOR) * MINOR - b;
+      if (Math.abs(d) > 0.01) t.style.transform = 'translateY(' + d.toFixed(2) + 'px)';
+    });
+    // the email inputs can't hold a probe: measure a twin with the same font, centred the same way
+    inp.forEach(function (i) {
+      var cs = getComputedStyle(i), r = i.getBoundingClientRect();
+      var tw = document.createElement('div');
+      tw.style.cssText = 'position:absolute;visibility:hidden;display:flex;align-items:center;left:0;top:' + (topOf(i) + r.height * 0) + 'px;height:' + i.clientHeight + 'px;font:' + cs.font + ';line-height:' + cs.lineHeight;
+      tw.innerHTML = '<span><span style="display:inline-block;width:0;height:0;vertical-align:baseline"></span>x</span>';
+      document.body.appendChild(tw);
+      var b = topOf(tw.firstChild.firstChild) + (parseFloat(cs.borderTopWidth) || 0); document.body.removeChild(tw);
+      var d = Math.round(b / MINOR) * MINOR - b;
+      if (Math.abs(d) > 0.01) i.style.transform = 'translateY(' + d.toFixed(2) + 'px)';
+    });
+  }
+
   function layout() {
     var vw = root.clientWidth;
     var avail = vw - RULER - 32;
     var n = Math.max(4, Math.min(14, Math.floor(avail / (CELL * 2)) * 2));
+    if (avail < 4 * CELL) n = 3;   // phones under ~360px wide (and 400% zoom): 3 columns so nothing is cut off
     var w = n * CELL;
     var gx = RULER + Math.round(((vw - RULER) - w) / 2 / MINOR) * MINOR;
     if (gx < RULER + 8) gx = RULER + 8;
@@ -504,18 +655,16 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
     root.style.setProperty('--gx', gx + 'px');
     if (n < 10) root.setAttribute('data-narrow', ''); else root.removeAttribute('data-narrow');
 
-    // Snap block heights to the 16px minor grid so edges land on grid lines
-    document.querySelectorAll('.snap').forEach(function (el) { el.style.minHeight = ''; });
-    document.querySelectorAll('.snap').forEach(function (el) {
-      var h = el.getBoundingClientRect().height;
-      el.style.minHeight = Math.ceil(h / MINOR) * MINOR + 'px';
-    });
+    root.setAttribute('data-n', n);
+    alignToGrid();
 
-    // Colourful grid: cover the colour row plus two cells above and below, in whole cells
+    // Colourful grid: cover the colour and Isolate rows plus two cells above and below, in whole cells
     var cr = document.querySelector('.ftext.colour'), cg = document.querySelector('.colour-grid');
     if (cr && cg) {
       var top = cr.getBoundingClientRect().top + window.scrollY;
       var rowEnd = top + (cr.nextElementSibling ? Math.max(cr.offsetHeight, cr.nextElementSibling.getBoundingClientRect().bottom + window.scrollY - top) : cr.offsetHeight);
+      var ce = document.querySelector('[data-colour-end]');
+      if (ce) rowEnd = Math.max(rowEnd, ce.getBoundingClientRect().bottom + window.scrollY);
       var gTop = Math.floor((top - CELL * 2) / CELL) * CELL;
       var gEnd = Math.ceil((rowEnd + CELL * 2) / CELL) * CELL;
       cg.style.top = gTop + 'px';
@@ -523,9 +672,11 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
       cg.style.setProperty('--cx', (gx + w / 2) + 'px');
     }
 
+
     // Rulers
-    var H = document.documentElement.scrollHeight;
     var left = document.querySelector('.ruler-left');
+    left.style.height = '0px'; left.innerHTML = '';   // don't let the old ruler stretch the page
+    var H = document.documentElement.scrollHeight;
     left.style.height = H + 'px';
     var s = '<svg width="' + RULER + '" height="' + H + '" shape-rendering="crispEdges"><path d="M' + (RULER - .5) + ' 0V' + H + '" stroke="' + A(.20) + '"/>';
     for (var y = MINOR; y < H; y += MINOR) {
@@ -547,23 +698,153 @@ html[data-narrow] .faq-list summary { font-size: 20px; }
   }
 
   var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(layout, 120); });
+  document.querySelectorAll('details').forEach(function (d) { d.addEventListener('toggle', layout); });
   layout();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   window.addEventListener('load', layout);
 
-  // Waitlist demo: until a real action is set, confirm without reloading
-  var form = document.querySelector('.signup');
-  form.addEventListener('submit', function (e) {
-    if (form.getAttribute('action') === '#') {
-      e.preventDefault();
-      document.querySelector('.consent').innerHTML = '<span class="ok">You\'re on the list.</span> One email on launch day.';
-      form.reset();
-    }
+  // Email forms: demo confirm if no real action is set
+  document.querySelectorAll('.signup').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      if (form.getAttribute('action') === '#') {
+        e.preventDefault();
+        var note = form.nextElementSibling;
+        if (note) note.innerHTML = '<span class="ok">You\'re on the list.</span> One email on launch day.';
+        form.reset();
+      }
+    });
+    edgeRunner(form);
   });
+
+  // A pulse that runs clockwise around the email box edge, leaving a trail that fades out over 1 second
+  function edgeRunner(form) {
+    if (!window.matchMedia || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var LAP = 3200, GAP = 1600, TRAIL = 1000, CYCLE = LAP + GAP, P = 12;
+    var cv = document.createElement('canvas'); cv.className = 'edge-run'; cv.setAttribute('aria-hidden', 'true');
+    form.appendChild(cv);
+    var ctx = cv.getContext('2d'), W = 0, H = 0, per = 0, on = true, raf = 0, t0 = performance.now();
+    function size() {                      // trace the visible box: the union of the field and the button
+      var fr = form.getBoundingClientRect(), x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      form.querySelectorAll('.cutout').forEach(function (c) {
+        var r = c.getBoundingClientRect();
+        x0 = Math.min(x0, r.left); y0 = Math.min(y0, r.top); x1 = Math.max(x1, r.right); y1 = Math.max(y1, r.bottom);
+      });
+      W = Math.round(x1 - x0); H = Math.round(y1 - y0); per = 2 * ((W - 1) + (H - 1));
+      var d = window.devicePixelRatio || 1;
+      cv.width = Math.round((W + 2 * P) * d); cv.height = Math.round((H + 2 * P) * d);
+      cv.style.width = (W + 2 * P) + 'px'; cv.style.height = (H + 2 * P) + 'px';
+      cv.style.left = (x0 - fr.left - P) + 'px'; cv.style.top = (y0 - fr.top - P) + 'px';
+      ctx.setTransform(d, 0, 0, d, P * d, P * d);
+    }
+    function pt(s) {                       // point at distance s along the border, clockwise from top-left
+      var w = W - 1, h = H - 1;
+      if (s < w) return [.5 + s, .5]; s -= w;
+      if (s < h) return [w + .5, .5 + s]; s -= h;
+      if (s < w) return [w + .5 - s, h + .5]; s -= w;
+      return [.5, h + .5 - s];
+    }
+    function pos(t) {                      // border distance at time t, or -1 during the pause between laps
+      var c = Math.floor(t / CYCLE), ph = t - c * CYCLE;
+      return ph < LAP ? { c: c, s: ph / LAP * per } : null;
+    }
+    function frame(now) {
+      raf = 0; if (!on) return;
+      var t = now - t0;
+      ctx.clearRect(-P, -P, W + 2 * P, H + 2 * P);
+      ctx.lineCap = 'round'; ctx.lineWidth = 1.5;
+      ctx.shadowColor = 'rgba(181,167,140,.95)'; ctx.shadowBlur = 8;
+      var STEP = 25, prev = null;
+      for (var ti = t - TRAIL; ti <= t; ti += STEP) {
+        var cur = pos(ti);
+        if (cur && prev && cur.c === prev.c && cur.s >= prev.s) {
+          var a = 1 - (t - ti) / TRAIL; a = a * a;
+          ctx.strokeStyle = 'rgba(242,232,210,' + a.toFixed(3) + ')';
+          ctx.beginPath();
+          var p0 = pt(prev.s); ctx.moveTo(p0[0], p0[1]);
+          for (var s = prev.s + 4; s < cur.s; s += 4) { var q = pt(s); ctx.lineTo(q[0], q[1]); }
+          var p1 = pt(cur.s); ctx.lineTo(p1[0], p1[1]);
+          ctx.stroke();
+        }
+        prev = cur;
+      }
+      var head = pos(t);
+      if (head) {
+        var h = pt(head.s);
+        ctx.fillStyle = '#fbf6ea'; ctx.shadowBlur = 12;
+        ctx.beginPath(); ctx.arc(h[0], h[1], 2, 0, Math.PI * 2); ctx.fill();
+      }
+      raf = requestAnimationFrame(frame);
+    }
+    size();
+    if (window.ResizeObserver) new ResizeObserver(size).observe(form);
+    window.addEventListener('resize', size); window.addEventListener('load', size);
+    if (window.IntersectionObserver) new IntersectionObserver(function (es) {
+      on = es[0].isIntersecting; if (on && !raf) raf = requestAnimationFrame(frame);
+    }).observe(form);
+    raf = requestAnimationFrame(frame);
+  }
   document.querySelectorAll('[aria-disabled="true"]').forEach(function (a) {
     a.addEventListener('click', function (e) { e.preventDefault(); });
   });
 })();
+
+  // Before/after wipe: drag anywhere on the frame; arrow keys move it via the hidden range input
+  document.querySelectorAll('.wipe').forEach(function (w) {
+    var r = w.querySelector('.wipe-range'), drag = false;
+    function set(p) { p = Math.max(0, Math.min(100, p)); w.style.setProperty('--pos', p + '%'); r.value = p; r.setAttribute('aria-valuetext', Math.round(100 - p) + '% No detail'); }
+    set(+r.value);
+    function at(e) { var b = w.getBoundingClientRect(); set((e.clientX - b.left) / b.width * 100); }
+    w.addEventListener('pointerdown', function (e) { if (e.button) return; drag = true; w.setPointerCapture(e.pointerId); at(e); r.focus({ preventScroll: true }); });
+    w.addEventListener('pointermove', function (e) { if (drag) at(e); });
+    w.addEventListener('pointerup', function () { drag = false; });
+    w.addEventListener('pointercancel', function () { drag = false; });
+    r.addEventListener('input', function () { set(+r.value); });
+  });
+
+  // Stepper: plays the steps one by one while on screen; clicking a tab takes over
+  document.querySelectorAll('.shade').forEach(function (f) {
+    var imgs = f.querySelectorAll('img.media'), tabs = f.querySelectorAll('.shade-tabs button'), capBox = f.previousElementSibling.querySelector('.shade-cap'), caps = capBox.querySelectorAll('div');
+    var i = 0, dur = 4000, timer = null, user = false, seen = false;
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    f.style.setProperty('--dur', dur / 1000 + 's');
+    function show(n) {
+      i = n;
+      [imgs, caps].forEach(function (l) { l.forEach(function (e, k) { e.classList.toggle('on', k === n); }); });
+      tabs.forEach(function (t, k) { t.setAttribute('aria-pressed', k === n ? 'true' : 'false'); });
+      if (timer) { clearTimeout(timer); timer = null; }
+      f.classList.remove('playing'); void f.offsetWidth;
+      if (!user && !held && seen && !still) { f.classList.add('playing'); timer = setTimeout(function () { show((i + 1) % imgs.length); }, dur); }
+    }
+    tabs.forEach(function (t, k) { t.addEventListener('click', function () { user = true; capBox.setAttribute('aria-live', 'polite'); show(k); }); });
+    var held = false;
+    function hold(h) { held = h; if (!user) show(i); }
+    f.addEventListener('mouseenter', function () { hold(true); }); f.addEventListener('mouseleave', function () { hold(false); });
+    f.addEventListener('focusin', function () { hold(true); }); f.addEventListener('focusout', function () { hold(false); });
+    if (window.IntersectionObserver) new IntersectionObserver(function (es) {
+      seen = es[0].isIntersecting; show(i);
+    }, { threshold: .4 }).observe(f);
+    else { seen = true; show(0); }
+  });
+
+  // Demo videos: play only while on screen, never with reduced motion, and each has a pause button
+  (function () {
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var PAUSE = '<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="0" width="3.5" height="12"/><rect x="7.5" y="0" width="3.5" height="12"/></svg>';
+    var PLAY = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 0L11 6L2 12Z"/></svg>';
+    document.querySelectorAll('figure video').forEach(function (v) {
+      var off = still, visible = false, b = document.createElement('button');
+      b.type = 'button'; b.className = 'vid-toggle';
+      function sync() {
+        if (!off && visible) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } else v.pause();
+        b.innerHTML = off ? PLAY : PAUSE;
+        b.setAttribute('aria-label', off ? 'Play video' : 'Pause video');
+      }
+      b.addEventListener('click', function () { off = !off; sync(); });
+      v.parentNode.appendChild(b);
+      if (window.IntersectionObserver) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; sync(); }, { threshold: .25 }).observe(v);
+      else { visible = true; sync(); }
+    });
+  })();
 </script>
 </body>
 </html>
